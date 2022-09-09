@@ -175,9 +175,10 @@ function Request:_send()
 		if self.ignore_ratelimit or self:_ratelimit() then
 			local st = tick()
 
-			raw_response = Promise.new(function(resolve, reject)
-				httpservice:RequestInternal(options):Start(function(_success, response)
-					resolve(response)
+			Promise.new(function(resolve, reject)
+				httpservice:RequestInternal(options):Start(function(success, response)
+					raw_response = response
+					resolve()
 				end)
 			end):await()
 			resp = Response.new(self, raw_response, tick() - st)
